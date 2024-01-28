@@ -4,11 +4,12 @@ OctoDomain is a Ruby gem that abstracts data models and allows for the easy and 
 
 Benefits:
 
-- Creating domain objects and mapping them to data models is easy
-- Domains are easy to test
-- Clients can be created to attribute load to specific dependencies
+- Creating domain objects and mapping them to data models is easy.
+- Domains are easy to test.
+- Clients can be created to attribute load to specific dependencies.
 - Extensible with solid defaults. Pass a custom transport to use a different messaging system e.g. JSON.
 - Ensures domain arguments are primitives that could be serialized if the domain is extracted.
+- Easy to mock interfaces in dependencies which allows for fast and simple tests.
 
 ## Installation
 
