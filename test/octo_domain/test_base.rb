@@ -102,4 +102,14 @@ class OctoDomain::BaseTest < Minitest::Test
     first_call = calls.first
     assert_equal ["Fox Mulder", 30, ["123 Main St", "456 Main St"]], first_call
   end
+
+  def test_can_only_pass_primitives
+    my_domain_client = MyDomain.client_for(:app)
+
+    error = assert_raises(ArgumentError) do
+      my_domain_client.create_person(Person, 30, ["123 Main St", "456 Main St"])
+    end
+
+    assert_equal "Argument #{Person} is not a primitive", error.message
+  end
 end

@@ -6,6 +6,14 @@ module OctoDomain
   # Base is the base class for all domain objects, which expose domain behavior
   # to the application layer.
   class Base
+    def self.inherited(subclass)
+      @_subclasses ||= []
+      @_subclasses << subclass
+      subclass.instance_variable_set(:@_objects, @_objects)
+      subclass.instance_variable_set(:@_messages, @_messages)
+      subclass.instance_variable_set(:@_transport, @_transport)
+    end
+
     def self.object(name, &block)
       domain_class = Class.new
       const_set(name.to_s.split("_").map(&:capitalize).join, domain_class)
@@ -17,14 +25,6 @@ module OctoDomain
 
     def self.objects
       @_objects ||= {}
-    end
-
-    def self.inherited(subclass)
-      @_subclasses ||= []
-      @_subclasses << subclass
-      subclass.instance_variable_set(:@_objects, @_objects)
-      subclass.instance_variable_set(:@_messages, @_messages)
-      subclass.instance_variable_set(:@_transport, @_transport)
     end
 
     def self.validate
