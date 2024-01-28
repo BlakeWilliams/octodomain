@@ -11,6 +11,10 @@ module OctoDomain
       domain.messages.each do |_name, message|
         define_singleton_method(message.name) do |*args|
           validate_arguments(args)
+          domain.middlewares.each do |middleware|
+            middleware.call(message.name, args)
+          end
+
           domain.transport.call(message.name, args)
         end
       end

@@ -14,6 +14,13 @@ module OctoDomain
       subclass.instance_variable_set(:@transport, @transport)
     end
 
+    # Creates a new instance of the domain which acts as the client to the
+    # domain itself. It's passed a client_name which is used to identify the
+    # caller to the domain.
+    def self.client_for(client_name)
+      Client.new(self, client_name)
+    end
+
     def self.object(name, &block)
       domain_class = Class.new
       const_set(name.to_s.split("_").map(&:capitalize).join, domain_class)
@@ -56,11 +63,12 @@ module OctoDomain
       domain_object&.serialize(result)
     end
 
-    # Creates a new instance of the domain which acts as the client to the
-    # domain itself. It's passed a client_name which is used to identify the
-    # caller to the domain.
-    def self.client_for(client_name)
-      Client.new(self, client_name)
+    def self.use(middleware, opts = {})
+      middlewares.push(middleware.new(self, opts))
+    end
+
+    def self.middlewares
+      @middlewares ||= []
     end
 
     private

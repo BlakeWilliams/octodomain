@@ -112,4 +112,28 @@ class OctoDomain::BaseTest < Minitest::Test
 
     assert_equal "Argument #{Person} is not a primitive", error.message
   end
+
+  class LoggerMiddleware
+    def initialize(domain, opts = {})
+      @domain = domain
+      @calls = opts[:calls]
+    end
+
+    def call(message, params)
+      @calls[message] ||= []
+      @calls[message] << params
+    end
+  end
+
+  def test_middleware_is_used_in_client
+    calls = {}
+    domain = Class.new(MyDomain) do
+      use LoggerMiddleware, calls: calls
+    end
+    domain_client = domain.client_for(:app)
+
+    domain_client.create_person("Fox Mulder", 30, ["123 Main St", "456 Main St"])
+
+    assert_equal 1, calls[:create_person].length
+  end
 end
