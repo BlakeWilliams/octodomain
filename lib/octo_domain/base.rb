@@ -23,8 +23,8 @@ module OctoDomain
     end
 
     def self.value(name, &block)
-      domain_class = Class.new
-      const_set(name.to_s.split("_").map(&:capitalize).join, domain_class)
+      domain_class = Class.new(Value)
+      const_set(name.to_s.split("_").map(&:capitalize).join + "Value", domain_class)
 
       values[name.to_sym] = ValueMapper.new(name, domain_class)
       values[name.to_sym].instance_exec(&block)

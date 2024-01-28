@@ -29,11 +29,8 @@ module OctoDomain
     end
 
     def serialize(result)
-      value_class.new.tap do |value|
-        attributes.each do |name|
-          value.public_send(:"#{name}=", result.public_send(name))
-        end
-      end
+      attribute_map = attributes.map { |a| [a, a] }.to_h
+      value_class.from(result, attribute_map: attribute_map)
     end
   end
 end

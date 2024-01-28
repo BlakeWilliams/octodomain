@@ -27,7 +27,7 @@ For example, a user domain may expose methods to find and create users like the 
 
 ```ruby
 class UserDomain < OctoDomain::Base
-  # Creates a MyDomain::User value object that can be used to map the result of
+  # Creates a UserDomain::UserValue value object that can be used to map the result of
   # domain methods to a value object
   value :user do
     attribute :id
@@ -37,19 +37,19 @@ class UserDomain < OctoDomain::Base
 
   # message exposes a domain method that can be called by a client
   message :create_user # returns nil, because there is no serializer passed
-  message :get_user, serialize_with: :user # maps the returned user model object to the `user` value object defined above automatically
+  message :find, serialize_with: :user # maps the returned user model object to the `user` value object defined above automatically
 
   private
 
   # Implements the `create_user` message behavior exposed by the message above
   def create_user(name, age, addresses)
-   OctoDomain::BaseTest::Person.create({name: name, age: age, addresses: addresses})
+   User.create({name: name, age: age, addresses: addresses})
    nil
   end
 
   # Implements the `get_user` message behavior
   def find(id)
-   OctoDomain::BaseTest::Person.find(id)
+   User.find(id)
   end
 end
 ```
