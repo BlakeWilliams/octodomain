@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    octo_domain (0.1.0)
+    octodomain (0.0.1)
       activesupport (~> 7.1)
 
 GEM
@@ -79,7 +79,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  octo_domain!
+  octodomain!
   rake (~> 13.0)
   standard (~> 1.3)
 
