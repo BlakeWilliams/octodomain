@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module OctoDomain
-  # DomainObject represents a domain object that is converted from an
-  # ActiveRecord model. It is used to represent the data that is passed between
-  # the  application and the domain layer.
+  # @!visibility private
   class ValueMapper
     attr_reader :name, :value_class
 

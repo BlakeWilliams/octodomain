@@ -78,14 +78,14 @@ class OctoDomain::BaseTest < Minitest::Test
   end
 
   class MockTransport < OctoDomain::LocalTransport
-    def call(message, params)
-      @_calls ||= {}
-      @_calls[message] ||= []
-      @_calls[message] << params
+    def call(message, *args, **kwargs)
+      args << kwargs unless kwargs.nil? || kwargs.empty?
+      calls[message] ||= []
+      calls[message] << args
     end
 
     def calls
-      @_calls
+      @_calls ||= {}
     end
   end
 
@@ -117,9 +117,9 @@ class OctoDomain::BaseTest < Minitest::Test
       @calls = opts[:calls]
     end
 
-    def call(message, params)
-      @calls[message] ||= []
-      @calls[message] << params
+    def call(message)
+      @calls[message] ||= 0
+      @calls[message] += 1
     end
   end
 
@@ -132,6 +132,6 @@ class OctoDomain::BaseTest < Minitest::Test
 
     domain_client.create_person("Fox Mulder", 30, ["123 Main St", "456 Main St"])
 
-    assert_equal 1, calls[:create_person].length
+    assert_equal 1, calls[:create_person]
   end
 end

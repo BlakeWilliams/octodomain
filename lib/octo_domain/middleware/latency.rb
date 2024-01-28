@@ -13,7 +13,7 @@ module OctoDomain
         @sleep = options[:ms] || 45
       end
 
-      def call(message_name, args)
+      def call(message_name)
         sleep(@sleep / 1000.0)
       end
     end

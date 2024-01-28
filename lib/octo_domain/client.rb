@@ -5,25 +5,33 @@ module OctoDomain
     VALID_ARGUMENT_TYPES = Set.new([String, Integer, Float, TrueClass, FalseClass, NilClass]).freeze
 
     def initialize(messages, transport, middlewares, client_name)
-      @domain = domain
+      @messages = messages
+      @transport = transport
+      @middlewares = middlewares
       @client_name = client_name
+    end
 
-      # Create public methods for each message in the domain
-      messages.each do |_name, message|
-        define_singleton_method(message.name) do |*args|
-          validate_arguments(args)
-          middlewares.each do |middleware|
-            middleware.call(message.name, args)
-          end
+    def method_missing(method_name, *args, **kwargs)
+      message_to_call = messages[method_name.to_sym]
+      return super unless message_to_call
 
-          transport.call(message.name, args)
-        end
+      validate_arguments(args)
+      validate_arguments(kwargs)
+
+      middlewares.each do |middleware|
+        middleware.call(message_to_call.name)
       end
+
+      transport.call(message_to_call.name, *args, **kwargs)
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      messages.key?(method_name.to_sym) || super
     end
 
     private
 
-    attr_reader :domain
+    attr_reader :domain, :messages, :middlewares, :transport
 
     # Ensures each argument is a primitive and not an object. e.g. Strings,
     # Integers, etc are fine. Models are not.
