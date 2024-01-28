@@ -18,7 +18,7 @@ module OctoDomain
     # domain itself. It's passed a client_name which is used to identify the
     # caller to the domain.
     def self.client_for(client_name, transport: LocalTransport.new)
-      transport.domain = self
+      transport.domain = new(client_name)
       Client.new(messages, transport, middlewares, client_name)
     end
 
@@ -62,6 +62,16 @@ module OctoDomain
 
     def self.middlewares
       @middlewares ||= []
+    end
+
+    attr_reader :client_name
+
+    def initialize(client_name)
+      @client_name = client_name
+    end
+
+    def serialize(message, result)
+      self.class.serialize(message, result)
     end
 
     private
