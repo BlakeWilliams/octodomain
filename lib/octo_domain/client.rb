@@ -38,6 +38,5 @@ module OctoDomain
         end
       end
     end
-
   end
 end
