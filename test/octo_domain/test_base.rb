@@ -34,7 +34,7 @@ class OctoDomain::BaseTest < Minitest::Test
     message :create_person
     message :get_person, serialize_with: :person
 
-    use_transport OctoDomain::LocalTransport
+    transport_with OctoDomain::LocalTransport
 
     def create_person(name, age, addresses)
       OctoDomain::BaseTest::Person.create({name: name, age: age, addresses: addresses})
@@ -91,7 +91,7 @@ class OctoDomain::BaseTest < Minitest::Test
 
   def test_can_use_custom_transports
     mock_domain = Class.new(MyDomain) do
-      use_transport MockTransport
+      transport_with MockTransport
     end
     mock_domain_client = mock_domain.client_for(:app)
 

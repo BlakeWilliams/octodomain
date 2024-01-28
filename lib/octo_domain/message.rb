@@ -9,10 +9,10 @@ module OctoDomain
       @serialize_with = serialize_with
     end
 
-    def from_result(result, domain_object)
+    def serialize(result, domain_object)
       # TODO raise if result is not nil and serialize_with is nil, or vice versa
-      if result && @serialize_with
-        domain_object.value_from_result(result)
+      if result && serialize_with
+        domain_object.serialize(result)
       end
     end
   end
