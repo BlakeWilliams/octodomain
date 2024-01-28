@@ -3,12 +3,6 @@
 module OctoDomain
   # LocalTransport calls methods on the domain object directly in-process.
   class BaseTransport
-    def initialize(domain, _opts)
-      @domain = domain
-    end
-
-    private
-
-    attr_reader :domain
+    attr_accessor :domain
   end
 end

@@ -7,7 +7,6 @@ class OctoDomain::Middleware::LatencyTest < Minitest::Test
   def test_it_works
     domain = Class.new(OctoDomain::Base) do
       message :greeting
-      transport_with OctoDomain::LocalTransport
       def greeting
       end
 

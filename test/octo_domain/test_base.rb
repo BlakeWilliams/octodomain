@@ -25,7 +25,7 @@ class OctoDomain::BaseTest < Minitest::Test
   end
 
   class MyDomain < OctoDomain::Base
-    object :person do
+    value :person do
       attribute :name
       attribute :age
       attribute :addresses
@@ -34,7 +34,7 @@ class OctoDomain::BaseTest < Minitest::Test
     message :create_person
     message :get_person, serialize_with: :person
 
-    transport_with OctoDomain::LocalTransport
+    private
 
     def create_person(name, age, addresses)
       OctoDomain::BaseTest::Person.create({name: name, age: age, addresses: addresses})
@@ -90,14 +90,12 @@ class OctoDomain::BaseTest < Minitest::Test
   end
 
   def test_can_use_custom_transports
-    mock_domain = Class.new(MyDomain) do
-      transport_with MockTransport
-    end
-    mock_domain_client = mock_domain.client_for(:app)
+    transport = MockTransport.new
+    mock_domain_client = MyDomain.client_for(:app, transport: transport)
 
     mock_domain_client.create_person("Fox Mulder", 30, ["123 Main St", "456 Main St"])
 
-    calls = mock_domain.transport.calls[:create_person]
+    calls = transport.calls[:create_person]
     assert_equal 1, calls.length
     first_call = calls.first
     assert_equal ["Fox Mulder", 30, ["123 Main St", "456 Main St"]], first_call

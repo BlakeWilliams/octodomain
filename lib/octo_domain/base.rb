@@ -17,20 +17,21 @@ module OctoDomain
     # Creates a new instance of the domain which acts as the client to the
     # domain itself. It's passed a client_name which is used to identify the
     # caller to the domain.
-    def self.client_for(client_name)
+    def self.client_for(client_name, transport: LocalTransport.new)
+      transport.domain = self
       Client.new(messages, transport, middlewares, client_name)
     end
 
-    def self.object(name, &block)
+    def self.value(name, &block)
       domain_class = Class.new
       const_set(name.to_s.split("_").map(&:capitalize).join, domain_class)
 
-      objects[name.to_sym] = DomainObject.new(name, domain_class)
-      objects[name.to_sym].instance_exec(&block)
+      values[name.to_sym] = ValueMapper.new(name, domain_class)
+      values[name.to_sym].instance_exec(&block)
     end
 
-    def self.objects
-      @objects ||= {}
+    def self.values
+      @values ||= {}
     end
 
     def self.validate
@@ -50,17 +51,9 @@ module OctoDomain
       @messages ||= {}
     end
 
-    def self.transport_with(transport, options = {})
-      @transport = transport.new(self, options)
-    end
-
-    def self.transport
-      @transport ||= LocalTransport.new
-    end
-
     def self.serialize(message, result)
-      domain_object = objects[messages[message].serialize_with]
-      domain_object&.serialize(result)
+      value_mapper = values[messages[message].serialize_with]
+      value_mapper&.serialize(result)
     end
 
     def self.use(middleware, opts = {})
