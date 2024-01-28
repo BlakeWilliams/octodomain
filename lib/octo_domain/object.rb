@@ -17,11 +17,11 @@ module OctoDomain
       @_attributes[field.to_sym] = @domain_class
 
       @domain_class.define_method(field) do
-        instance_variable_get("@#{field}")
+        instance_variable_get(:"@#{field}")
       end
 
-      @domain_class.define_method("#{field}=") do |value|
-        instance_variable_set("@#{field}", value)
+      @domain_class.define_method(:"#{field}=") do |value|
+        instance_variable_set(:"@#{field}", value)
       end
     end
 
@@ -33,7 +33,7 @@ module OctoDomain
     def value_from_result(result)
       @domain_class.new.tap do |value|
         attributes.each do |name|
-          value.public_send("#{name}=", result.public_send(name))
+          value.public_send(:"#{name}=", result.public_send(name))
         end
       end
     end
