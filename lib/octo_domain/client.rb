@@ -3,19 +3,20 @@
 module OctoDomain
   class Client
     VALID_ARGUMENT_TYPES = Set.new([String, Integer, Float, TrueClass, FalseClass, NilClass]).freeze
-    def initialize(domain, client_name)
+
+    def initialize(messages, transport, middlewares, client_name)
       @domain = domain
       @client_name = client_name
 
       # Create public methods for each message in the domain
-      domain.messages.each do |_name, message|
+      messages.each do |_name, message|
         define_singleton_method(message.name) do |*args|
           validate_arguments(args)
-          domain.middlewares.each do |middleware|
+          middlewares.each do |middleware|
             middleware.call(message.name, args)
           end
 
-          domain.transport.call(message.name, args)
+          transport.call(message.name, args)
         end
       end
     end

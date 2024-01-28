@@ -18,7 +18,7 @@ module OctoDomain
     # domain itself. It's passed a client_name which is used to identify the
     # caller to the domain.
     def self.client_for(client_name)
-      Client.new(self, client_name)
+      Client.new(messages, transport, middlewares, client_name)
     end
 
     def self.object(name, &block)
